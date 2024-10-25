@@ -5,7 +5,7 @@ import pandas as pd
 import plotly.express as px
 import seaborn as sns
 
-from finance_data import get_stock_data, get_industry_pe_ratio
+from finance_data import get_stock_data
 from evaluations import evaluate_metrics
 from explanations import metric_explanations
 
@@ -46,44 +46,100 @@ def main():
         st.error(str(e))
         return
 
-    # Fetch industry average PE ratio
-    industry_pe_ratio = get_industry_pe_ratio(industry)
+    # Separate Numerical and Categorical Metrics
+    numerical_metrics = {
+        'Metric': [
+            'Current Price ($)',
+            'PE Ratio',
+            'Forward PE',
+            'PEG Ratio',
+            'Price-to-Book Ratio',
+            'Price-to-Sales Ratio',
+            'EV/EBITDA Ratio',
+            'Dividend Yield (%)',
+            'Return on Equity (%)',
+            'Earnings Per Share ($)',
+            'Debt-to-Equity Ratio',
+            'Profit Margin (%)',
+            'Beta'
+        ],
+        'Value': [
+            metrics['Current Price ($)'],
+            metrics['PE Ratio'],
+            metrics['Forward PE'],
+            metrics['PEG Ratio'],
+            metrics['Price-to-Book Ratio'],
+            metrics['Price-to-Sales Ratio'],
+            metrics['EV/EBITDA Ratio'],
+            metrics['Dividend Yield (%)'],
+            metrics['Return on Equity (%)'],
+            metrics['Earnings Per Share ($)'],
+            metrics['Debt-to-Equity Ratio'],
+            metrics['Profit Margin (%)'],
+            metrics['Beta']
+        ]
+    }
 
-    # Prepare data for table
-    df_metrics = pd.DataFrame({
-        'Metric': list(metrics.keys()),
-        'Value': list(metrics.values())
-    })
+    categorical_metrics = {
+        'Metric': [
+            'Sector',
+            'Industry'
+        ],
+        'Value': [
+            sector,
+            industry
+        ]
+    }
+
+    df_numerical = pd.DataFrame(numerical_metrics)
+    df_categorical = pd.DataFrame(categorical_metrics)
 
     # Evaluate the metrics
-    evaluations_dict, overall_evaluation = evaluate_metrics(metrics, industry_pe_ratio)
-    df_evaluations = pd.DataFrame(evaluations_dict).set_index('Metric')
+    evaluations_dict, _ = evaluate_metrics(metrics)
 
+    # Layout using columns
     col1, col2 = st.columns(2)
 
     with col1:
-        # Display the metrics in a table
+        # Display Numerical Metrics in a DataFrame
         st.header(f"Financial Metrics for {ticker_symbol}")
         st.dataframe(
-            df_metrics.set_index('Metric')
+            df_numerical.set_index('Metric'),
+            use_container_width=True  # Widen the table
         )
 
     with col2:
-        # Explanations
-        st.header("Metrics Explained")
-        metric_list = list(metric_explanations.keys())
-        choice = st.selectbox(
-            "Select a Metric to Explain",
-            metric_list,
+        # Display Categorical Metrics in a Table
+        st.header("Company Classification")
+        st.table(
+            df_categorical.set_index('Metric')
         )
-        st.write(f"**{choice}:** {metric_explanations[choice]}")
 
-    # Display evaluations in a table
+    # Metrics Explained
+    st.header("Metrics Explained")
+    metric_list = list(metric_explanations.keys())
+    choice = st.selectbox(
+        "Select a Metric to Explain",
+        metric_list,
+    )
+    st.write(f"**{choice}:** {metric_explanations[choice]}")
+
+    # Display evaluations in a table with color-coded text
     st.header("Evaluations")
-    st.table(df_evaluations)
 
-    st.header("Overall Evaluation")
-    st.markdown(f"### {overall_evaluation}")
+    # Build the markdown table manually
+    evaluations = evaluations_dict['Evaluation']
+    metrics_list = evaluations_dict['Metric']
+    colors = evaluations_dict['Color']
+
+    # Start the markdown table
+    table_md = "| Metric | Evaluation |\n|---|---|\n"
+    for metric, evaluation, color in zip(metrics_list, evaluations, colors):
+        table_md += f"| {metric} | <span style='color:{color}'>{evaluation}</span> |\n"
+
+    st.markdown(table_md, unsafe_allow_html=True)
+
+    # Note: The Final Overall Evaluation section has been removed as per your instruction.
 
     st.info("Disclaimer: This evaluation is based on basic financial metrics and should not be considered as financial advice. Please conduct your own research or consult with a financial advisor before making investment decisions.")
 
@@ -103,9 +159,9 @@ def main():
         # Interactive Price Chart with Plotly
         st.subheader("Historical Stock Price")
         fig_price = px.line(
-            stock_hist, 
-            x='Date', 
-            y='Close', 
+            stock_hist,
+            x='Date',
+            y='Close',
             title=f'{ticker_symbol} Closing Price Over the Last Year',
             labels={'Close': 'Closing Price ($)', 'Date': 'Date'}
         )
@@ -119,8 +175,8 @@ def main():
 
         st.subheader("Closing Price with Moving Averages")
         fig_ma = px.line(
-            stock_hist, 
-            x='Date', 
+            stock_hist,
+            x='Date',
             y=['Close', 'MA50', 'MA200'],
             title=f"{ticker_symbol} Closing Price with 50-Day and 200-Day Moving Averages",
             labels={'value': 'Price ($)', 'Date': 'Date'},
@@ -132,15 +188,16 @@ def main():
     # Trading Volume
     st.subheader("Trading Volume")
     fig_volume = px.bar(
-        stock_hist, 
-        x='Date', 
-        y='Volume', 
+        stock_hist,
+        x='Date',
+        y='Volume',
         title=f'{ticker_symbol} Trading Volume Over the Last Year',
         labels={'Volume': 'Volume', 'Date': 'Date'}
     )
     fig_volume.update_layout(xaxis_title='Date', yaxis_title='Volume')
     st.plotly_chart(fig_volume, use_container_width=True)
 
+    # Note: The Revenue and Net Income Trends section has been removed as per your instruction.
 
 if __name__ == "__main__":
     main()

@@ -1,87 +1,119 @@
 # evaluations.py
 
-def evaluate_pe_ratio(pe, industry_pe):
-    if pe is None or industry_pe is None:
-        return ("PE ratio is not available for comparison.", 0)
-    elif pe < industry_pe:
-        return ("Undervalued compared to industry average PE ratio.", 1)
-    elif pe == industry_pe:
-        return ("PE ratio is equal to industry average.", 0)
+def evaluate_pe_ratio(pe):
+    try:
+        pe_value = float(pe)
+    except:
+        return ("PE ratio is not available for comparison.", 0, "black")
+    # Define fixed ranges for PE Ratio
+    if pe_value < 20:
+        return (f"Undervalued based on PE Ratio (<20). PE Ratio = {pe_value}.", 1, "green")
+    elif 20 <= pe_value <= 25:
+        return (f"Fairly valued based on PE Ratio (20 - 25). PE Ratio = {pe_value}.", 0, "orange")
     else:
-        return ("Overvalued compared to industry average PE ratio.", -1)
+        return (f"Overvalued based on PE Ratio (>25). PE Ratio = {pe_value}.", -1, "red")
 
 def evaluate_roe(roe_value):
-    if roe_value is None:
-        return ("Return on Equity is not available.", 0)
-    elif roe_value > 15:
-        return ("High Return on Equity.", 1)
+    try:
+        roe_value = float(roe_value.replace('%', ''))
+    except:
+        return ("Return on Equity is not available.", 0, "black")
+    if roe_value > 15:
+        return (f"High Return on Equity (>15%). ROE = {roe_value}%.", 1, "green")
     elif 10 <= roe_value <= 15:
-        return ("Moderate Return on Equity.", 0)
+        return (f"Moderate Return on Equity (10% - 15%). ROE = {roe_value}%.", 0, "orange")
     else:
-        return ("Low Return on Equity.", -1)
+        return (f"Low Return on Equity (<10%). ROE = {roe_value}%.", -1, "red")
 
 def evaluate_debt_to_equity(de_ratio):
-    if de_ratio is None:
-        return ("Debt-to-Equity ratio is not available.", 0)
-    elif de_ratio < 1:
-        return ("Low Debt-to-Equity ratio.", 1)
-    elif 1 <= de_ratio <= 2:
-        return ("Moderate Debt-to-Equity ratio.", 0)
+    try:
+        de_value = float(de_ratio)
+    except:
+        return ("Debt-to-Equity ratio is not available.", 0, "black")
+    if de_value < 1:
+        return (f"Low Debt-to-Equity ratio (<1). Debt-to-Equity = {de_value}.", 1, "green")
+    elif 1 <= de_value <= 2:
+        return (f"Moderate Debt-to-Equity ratio (1 - 2). Debt-to-Equity = {de_value}.", 0, "orange")
     else:
-        return ("High Debt-to-Equity ratio.", -1)
+        return (f"High Debt-to-Equity ratio (>2). Debt-to-Equity = {de_value}.", -1, "red")
 
 def evaluate_profit_margin(pm):
-    if pm is None:
-        return ("Profit Margin is not available.", 0)
-    elif pm > 20:
-        return ("High Profit Margin.", 1)
-    elif 10 <= pm <= 20:
-        return ("Moderate Profit Margin.", 0)
+    try:
+        pm_value = float(pm.replace('%', ''))
+    except:
+        return ("Profit Margin is not available.", 0, "black")
+    if pm_value > 20:
+        return (f"High Profit Margin (>20%). Profit Margin = {pm_value}%.", 1, "green")
+    elif 10 <= pm_value <= 20:
+        return (f"Moderate Profit Margin (10% - 20%). Profit Margin = {pm_value}%.", 0, "orange")
     else:
-        return ("Low Profit Margin.", -1)
+        return (f"Low Profit Margin (<10%). Profit Margin = {pm_value}%.", -1, "red")
 
 def evaluate_ev_ebitda(ev_ebitda):
-    if ev_ebitda is None:
-        return ("EV/EBITDA ratio is not available.", 0)
-    elif ev_ebitda < 10:
-        return ("Potentially undervalued based on EV/EBITDA.", 1)
-    elif 10 <= ev_ebitda <= 14:
-        return ("Fairly valued based on EV/EBITDA.", 0)
+    try:
+        ev_ebitda_value = float(ev_ebitda)
+    except:
+        return ("EV/EBITDA ratio is not available.", 0, "black")
+    if ev_ebitda_value < 10:
+        return (f"Potentially undervalued based on EV/EBITDA (<10). EV/EBITDA = {ev_ebitda_value}.", 1, "green")
+    elif 10 <= ev_ebitda_value <= 14:
+        return (f"Fairly valued based on EV/EBITDA (10 - 14). EV/EBITDA = {ev_ebitda_value}.", 0, "orange")
     else:
-        return ("Potentially overvalued based on EV/EBITDA.", -1)
+        return (f"Potentially overvalued based on EV/EBITDA (>14). EV/EBITDA = {ev_ebitda_value}.", -1, "red")
 
-def evaluate_metrics(metrics, industry_pe_ratio):
-    pe_message, pe_score = evaluate_pe_ratio(metrics['PE Ratio'], industry_pe_ratio)
-    roe_message, roe_score = evaluate_roe(metrics['Return on Equity (%)'])
-    de_message, de_score = evaluate_debt_to_equity(metrics['Debt-to-Equity Ratio'])
-    pm_message, pm_score = evaluate_profit_margin(metrics['Profit Margin (%)'])
-    ev_message, ev_score = evaluate_ev_ebitda(metrics['EV/EBITDA Ratio'])
-
-    total_score = pe_score + roe_score + de_score + pm_score + ev_score
-
-    # Determine overall valuation
-    if total_score >= 3:
-        overall_evaluation = "The stock appears to be **undervalued**."
-    elif -2 <= total_score <= 2:
-        overall_evaluation = "The stock appears to be **fairly valued**."
+def evaluate_price_to_sales(ps_ratio):
+    try:
+        ps_value = float(ps_ratio)
+    except:
+        return ("Price-to-Sales ratio is not available.", 0, "black")
+    # Define expected ranges for Price-to-Sales Ratio
+    # These ranges can vary by industry; adjust as necessary
+    if ps_value < 1:
+        return (f"Undervalued based on Price-to-Sales Ratio (<1). Price-to-Sales Ratio = {ps_value}.", 1, "green")
+    elif 1 <= ps_value <= 3:
+        return (f"Fairly valued based on Price-to-Sales Ratio (1 - 3). Price-to-Sales Ratio = {ps_value}.", 0, "orange")
     else:
-        overall_evaluation = "The stock appears to be **overvalued**."
+        return (f"Overvalued based on Price-to-Sales Ratio (>3). Price-to-Sales Ratio = {ps_value}.", -1, "red")
 
+def evaluate_metrics(metrics):
+    pe_message, pe_score, pe_color = evaluate_pe_ratio(metrics['PE Ratio'])
+    roe_message, roe_score, roe_color = evaluate_roe(metrics['Return on Equity (%)'])
+    de_message, de_score, de_color = evaluate_debt_to_equity(metrics['Debt-to-Equity Ratio'])
+    pm_message, pm_score, pm_color = evaluate_profit_margin(metrics['Profit Margin (%)'])
+    ev_message, ev_score, ev_color = evaluate_ev_ebitda(metrics['EV/EBITDA Ratio'])
+    ps_message, ps_score, ps_color = evaluate_price_to_sales(metrics['Price-to-Sales Ratio'])
+
+    total_score = pe_score + roe_score + de_score + pm_score + ev_score + ps_score
+
+    # Determine overall valuation without color
+    # As per your instruction, the overall evaluation statement is removed
+
+    # Create evaluation dictionary with color-coded messages
     evaluations = {
         'Metric': [
             'PE Ratio',
             'Return on Equity',
             'Debt-to-Equity',
             'Profit Margin',
-            'EV/EBITDA Ratio'
+            'EV/EBITDA Ratio',
+            'Price-to-Sales Ratio'
         ],
         'Evaluation': [
             pe_message,
             roe_message,
             de_message,
             pm_message,
-            ev_message
+            ev_message,
+            ps_message
         ],
+        'Color': [
+            pe_color,
+            roe_color,
+            de_color,
+            pm_color,
+            ev_color,
+            ps_color
+        ]
     }
 
-    return evaluations, overall_evaluation
+    return evaluations, None  # Removed overall_evaluation

@@ -57,3 +57,4 @@ urllib3==2.2.3
 webencodings==0.5.1
 yfinance==0.2.46
 plotly
+tabulate

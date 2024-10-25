@@ -39,38 +39,23 @@ def get_stock_data(ticker_symbol):
     else:
         ev_ebitda_ratio = None
 
-    # Create a dictionary of metrics
+    # Format numerical values as strings with appropriate formatting
     metrics = {
-        'Current Price ($)': current_price,
-        'PE Ratio': pe_ratio,
-        'Forward PE': forward_pe,
-        'PEG Ratio': peg_ratio,
-        'Price-to-Book Ratio': pb_ratio,
-        'Price-to-Sales Ratio': ps_ratio,
-        'EV/EBITDA Ratio': ev_ebitda_ratio,
-        'Dividend Yield (%)': dividend_yield_percentage,
-        'Return on Equity (%)': roe_percentage,
-        'Earnings Per Share ($)': eps,
-        'Debt-to-Equity Ratio': debt_to_equity,
-        'Profit Margin (%)': profit_margin_percentage,
-        'Beta': beta,
+        'Current Price ($)': f"${current_price:,.2f}" if current_price is not None else 'N/A',
+        'PE Ratio': f"{pe_ratio:.2f}" if pe_ratio is not None else 'N/A',
+        'Forward PE': f"{forward_pe:.2f}" if forward_pe is not None else 'N/A',
+        'PEG Ratio': f"{peg_ratio:.2f}" if peg_ratio is not None else 'N/A',
+        'Price-to-Book Ratio': f"{pb_ratio:.2f}" if pb_ratio is not None else 'N/A',
+        'Price-to-Sales Ratio': f"{ps_ratio:.2f}" if ps_ratio is not None else 'N/A',
+        'EV/EBITDA Ratio': f"{ev_ebitda_ratio:.2f}" if ev_ebitda_ratio is not None else 'N/A',
+        'Dividend Yield (%)': f"{dividend_yield_percentage:.2f}%" if dividend_yield_percentage is not None else 'N/A',
+        'Return on Equity (%)': f"{roe_percentage:.2f}%" if roe_percentage is not None else 'N/A',
+        'Earnings Per Share ($)': f"${eps:,.2f}" if eps is not None else 'N/A',
+        'Debt-to-Equity Ratio': f"{debt_to_equity:.2f}" if debt_to_equity is not None else 'N/A',
+        'Profit Margin (%)': f"{profit_margin_percentage:.2f}%" if profit_margin_percentage is not None else 'N/A',
+        'Beta': f"{beta:.2f}" if beta is not None else 'N/A',
         'Sector': sector,
         'Industry': industry
     }
 
     return stock, metrics, sector, industry
-
-def get_industry_pe_ratio(industry):
-    # Placeholder function to get industry average PE ratio
-    # In a real application, fetch this data from a financial API or database
-    industry_pe_ratios = {
-        'Information Technology Services': 25,
-        'Consumer Electronics': 20,
-        'Software—Application': 30,
-        'Financial Services': 15,
-        'Healthcare': 22,
-        'Energy': 18,
-        'Retail': 18,
-        # Add more industries and their average PE ratios as needed
-    }
-    return industry_pe_ratios.get(industry, None)
