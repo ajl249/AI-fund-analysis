@@ -1,8 +1,11 @@
+# stock_analysis_app.py
+
 import yfinance as yf
 import matplotlib.pyplot as plt
 import seaborn as sns
 import pandas as pd
 import streamlit as st
+import plotly.express as px
 
 def main():
     # Set Seaborn style
@@ -15,17 +18,12 @@ def main():
     st.sidebar.header("Input Options")
     ticker_symbol = st.sidebar.text_input("Enter the stock ticker symbol:", value='AAPL').upper()
 
-    # Define S&P 500 ticker symbol
-    sp500_symbol = "^GSPC"
-
     # Download the stock data
     stock = yf.Ticker(ticker_symbol)
-    sp500 = yf.Ticker(sp500_symbol)
 
     # Get key financial metrics
     try:
         info = stock.info
-        sp500_info = sp500.info
     except Exception as e:
         st.error(f"Error fetching data: {e}")
         return
@@ -36,16 +34,15 @@ def main():
     forward_pe = info.get('forwardPE', None)
     peg_ratio = info.get('pegRatio', None)
     pb_ratio = info.get('priceToBook', None)
+    ps_ratio = info.get('priceToSalesTrailing12Months', None)
     dividend_yield = info.get('dividendYield', None)
     roe = info.get('returnOnEquity', None)
     eps = info.get('trailingEps', None)
     debt_to_equity = info.get('debtToEquity', None)
     profit_margin = info.get('profitMargins', None)
-    free_cash_flow = info.get('freeCashflow', None)
     beta = info.get('beta', None)
-
-    # S&P 500 Metrics
-    sp500_pe_ratio = sp500_info.get('trailingPE', None)
+    enterprise_value = info.get('enterpriseValue', None)
+    ebitda = info.get('ebitda', None)
 
     # Convert percentages
     if dividend_yield is not None:
@@ -63,6 +60,20 @@ def main():
     else:
         profit_margin_percentage = None
 
+    # Calculate EV/EBITDA Ratio
+    if enterprise_value is not None and ebitda is not None and ebitda != 0:
+        ev_ebitda_ratio = enterprise_value / ebitda
+    else:
+        ev_ebitda_ratio = None
+
+    # Fetch industry and sector
+    sector = info.get('sector', 'N/A')
+    industry = info.get('industry', 'N/A')
+
+    # Placeholder for industry averages (In a real scenario, you would fetch this data from a financial API)
+    # For this example, let's assume some industry average PE ratios
+    industry_pe_ratio = get_industry_pe_ratio(industry)
+
     # Prepare data for table
     metrics = {
         'Metric': [
@@ -71,13 +82,16 @@ def main():
             'Forward PE',
             'PEG Ratio',
             'Price-to-Book Ratio',
+            'Price-to-Sales Ratio',
+            'EV/EBITDA Ratio',
             'Dividend Yield (%)',
             'Return on Equity (%)',
             'Earnings Per Share',
             'Debt-to-Equity Ratio',
             'Profit Margin (%)',
-            'Free Cash Flow',
-            'Beta'
+            'Beta',
+            'Sector',
+            'Industry'
         ],
         'Value': [
             current_price,
@@ -85,28 +99,31 @@ def main():
             forward_pe,
             peg_ratio,
             pb_ratio,
+            ps_ratio,
+            ev_ebitda_ratio,
             dividend_yield_percentage,
             roe_percentage,
             eps,
             debt_to_equity,
             profit_margin_percentage,
-            free_cash_flow,
-            beta
+            beta,
+            sector,
+            industry
         ]
     }
 
     df_metrics = pd.DataFrame(metrics)
 
     # Evaluation Functions (updated)
-    def evaluate_pe_ratio(pe, sp_pe):
-        if pe is None or sp_pe is None:
+    def evaluate_pe_ratio(pe, industry_pe):
+        if pe is None or industry_pe is None:
             return ("PE ratio is not available for comparison.", 0)
-        elif pe < sp_pe:
-            return ("Undervalued compared to S&P 500 based on PE ratio.", 1)
-        elif pe == sp_pe:
-            return ("PE ratio is equal to S&P 500.", 0)
+        elif pe < industry_pe:
+            return ("Undervalued compared to industry average PE ratio.", 1)
+        elif pe == industry_pe:
+            return ("PE ratio is equal to industry average.", 0)
         else:
-            return ("Overvalued compared to S&P 500 based on PE ratio.", -1)
+            return ("Overvalued compared to industry average PE ratio.", -1)
 
     def evaluate_roe(roe_value):
         if roe_value is None:
@@ -138,19 +155,30 @@ def main():
         else:
             return ("Low Profit Margin.", -1)
 
+    def evaluate_ev_ebitda(ev_ebitda):
+        if ev_ebitda is None:
+            return ("EV/EBITDA ratio is not available.", 0)
+        elif ev_ebitda < 10:
+            return ("Potentially undervalued based on EV/EBITDA.", 1)
+        elif 10 <= ev_ebitda <= 14:
+            return ("Fairly valued based on EV/EBITDA.", 0)
+        else:
+            return ("Potentially overvalued based on EV/EBITDA.", -1)
+
     # Evaluate the metrics
-    pe_message, pe_score = evaluate_pe_ratio(pe_ratio, sp500_pe_ratio)
+    pe_message, pe_score = evaluate_pe_ratio(pe_ratio, industry_pe_ratio)
     roe_message, roe_score = evaluate_roe(roe_percentage)
     de_message, de_score = evaluate_debt_to_equity(debt_to_equity)
     pm_message, pm_score = evaluate_profit_margin(profit_margin_percentage)
+    ev_message, ev_score = evaluate_ev_ebitda(ev_ebitda_ratio)
 
     # Sum the scores
-    total_score = pe_score + roe_score + de_score + pm_score
+    total_score = pe_score + roe_score + de_score + pm_score + ev_score
 
     # Determine overall valuation
-    if total_score >= 2:
+    if total_score >= 3:
         overall_evaluation = "The stock appears to be **undervalued**."
-    elif -1 <= total_score <= 1:
+    elif -2 <= total_score <= 2:
         overall_evaluation = "The stock appears to be **fairly valued**."
     else:
         overall_evaluation = "The stock appears to be **overvalued**."
@@ -161,8 +189,20 @@ def main():
 
     # Display evaluations in a table
     evaluations = {
-        'Metric': ['PE Ratio', 'Return on Equity', 'Debt-to-Equity', 'Profit Margin'],
-        'Evaluation': [pe_message, roe_message, de_message, pm_message],
+        'Metric': [
+            'PE Ratio',
+            'Return on Equity',
+            'Debt-to-Equity',
+            'Profit Margin',
+            'EV/EBITDA Ratio'
+        ],
+        'Evaluation': [
+            pe_message,
+            roe_message,
+            de_message,
+            pm_message,
+            ev_message
+        ],
     }
     df_evaluations = pd.DataFrame(evaluations)
     st.header("Evaluations")
@@ -171,54 +211,60 @@ def main():
     st.header("Overall Evaluation")
     st.markdown(f"### {overall_evaluation}")
 
-    st.info("Disclaimer: This evaluation is based on basic financial metrics and should not be considered as financial advice. Please conduct your own research or consult with a financial advisor before making investment decisions.")
+    st.info("Disclaimer: This evaluation is based on basic financial metrics and should not be considered as financial advice. Please conduct your own research advisor before making investment decisions.")
 
     # --- Data Visualization ---
 
     # Fetch historical market data (past 1 year)
     stock_hist = stock.history(period="1y")
-    sp500_hist = sp500.history(period="1y")
 
-    if stock_hist.empty or sp500_hist.empty:
+    if stock_hist.empty:
         st.warning("No historical data available to plot.")
         return
 
-    # Normalize the prices for comparison
-    stock_hist['Normalized'] = stock_hist['Close'] / stock_hist['Close'].iloc[0]
-    sp500_hist['Normalized'] = sp500_hist['Close'] / sp500_hist['Close'].iloc[0]
+    # Interactive Price Chart
+    st.header("Historical Stock Price")
+    fig = px.line(stock_hist, x=stock_hist.index, y='Close', title=f'{ticker_symbol} Closing Price Over the Last Year')
+    st.plotly_chart(fig)
 
-    # Plot comparison of stock vs S&P 500
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(stock_hist.index, stock_hist['Normalized'], label=f"{ticker_symbol} Stock Price")
-    ax.plot(sp500_hist.index, sp500_hist['Normalized'], label="S&P 500 Index", linestyle='--')
-    ax.set_title(f"{ticker_symbol} vs S&P 500 - Last 1 Year Performance")
-    ax.set_ylabel('Normalized Price')
-    ax.set_xlabel('Date')
-    ax.legend()
-    st.pyplot(fig)
+    # Revenue and Earnings (using Yahoo Financials API)
+    st.header("Financial Statements")
+    try:
+        income_stmt = stock.financials
+        income_stmt = income_stmt.T  # Transpose for readability
+        st.subheader("Income Statement")
+        st.dataframe(income_stmt)
+    except Exception as e:
+        st.warning("Income statement data is not available.")
 
-    # Additional Visualizations
-    # Plot Closing Price and Moving Averages
-    stock_hist['MA50'] = stock_hist['Close'].rolling(window=50).mean()
-    stock_hist['MA200'] = stock_hist['Close'].rolling(window=200).mean()
+    # Cash Flow Statement
+    try:
+        cashflow_stmt = stock.cashflow
+        cashflow_stmt = cashflow_stmt.T
+        st.subheader("Cash Flow Statement")
+        st.dataframe(cashflow_stmt)
+    except Exception as e:
+        st.warning("Cash flow statement data is not available.")
 
-    fig2, ax1 = plt.subplots(figsize=(12, 6))
-    ax1.plot(stock_hist.index, stock_hist['Close'], label='Closing Price', color='blue')
-    ax1.plot(stock_hist.index, stock_hist['MA50'], label='50-Day MA', color='red', linestyle='--')
-    ax1.plot(stock_hist.index, stock_hist['MA200'], label='200-Day MA', color='green', linestyle='--')
-    ax1.set_title(f"{ticker_symbol} Stock Price with Moving Averages")
-    ax1.set_ylabel('Price ($)')
-    ax1.set_xlabel('Date')
-    ax1.legend()
-    st.pyplot(fig2)
+    # Balance Sheet
+    try:
+        balance_sheet = stock.balance_sheet
+        balance_sheet = balance_sheet.T
+        st.subheader("Balance Sheet")
+        st.dataframe(balance_sheet)
+    except Exception as e:
+        st.warning("Balance sheet data is not available.")
 
-    # Plot Volume
-    fig3, ax2 = plt.subplots(figsize=(12, 3))
-    ax2.bar(stock_hist.index, stock_hist['Volume'], color='gray')
-    ax2.set_title('Trading Volume')
-    ax2.set_ylabel('Volume')
-    ax2.set_xlabel('Date')
-    st.pyplot(fig3)
+def get_industry_pe_ratio(industry):
+    # Placeholder function to get industry average PE ratio
+    # In a real application, fetch this data from a financial API or database
+    industry_pe_ratios = {
+        'Information Technology Services': 25,
+        'Consumer Electronics': 20,
+        'Software—Application': 30,
+        # Add more industries and their average PE ratios
+    }
+    return industry_pe_ratios.get(industry, None)
 
 if __name__ == "__main__":
     main()
