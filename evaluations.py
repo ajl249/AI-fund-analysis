@@ -13,6 +13,33 @@ def evaluate_pe_ratio(pe):
     else:
         return (f"Overvalued based on PE Ratio (>25). PE Ratio = {pe_value}.", -1, "red")
 
+def evaluate_peg_ratio(peg):
+    try:
+        peg_value = float(peg)
+    except:
+        return ("PEG ratio is not available for comparison.", 0, "black")
+    # Define fixed ranges for PEG Ratio
+    if peg_value < 1:
+        return (f"Undervalued based on PEG Ratio (<1). PEG Ratio = {peg_value}.", 1, "green")
+    elif 1 <= peg_value <= 1.5:
+        return (f"Fairly valued based on PEG Ratio (1 - 1.5). PEG Ratio = {peg_value}.", 0, "orange")
+    else:
+        return (f"Overvalued based on PEG Ratio (>1.5). PEG Ratio = {peg_value}.", -1, "red")
+
+def evaluate_price_to_sales(ps_ratio):
+    try:
+        ps_value = float(ps_ratio)
+    except:
+        return ("Price-to-Sales ratio is not available.", 0, "black")
+    # Define expected ranges for Price-to-Sales Ratio
+    # These ranges can vary by industry; adjust as necessary
+    if ps_value < 1:
+        return (f"Undervalued based on Price-to-Sales Ratio (<1). Price-to-Sales Ratio = {ps_value}.", 1, "green")
+    elif 1 <= ps_value <= 3:
+        return (f"Fairly valued based on Price-to-Sales Ratio (1 - 3). Price-to-Sales Ratio = {ps_value}.", 0, "orange")
+    else:
+        return (f"Overvalued based on Price-to-Sales Ratio (>3). Price-to-Sales Ratio = {ps_value}.", -1, "red")
+
 def evaluate_roe(roe_value):
     try:
         roe_value = float(roe_value.replace('%', ''))
@@ -61,29 +88,16 @@ def evaluate_ev_ebitda(ev_ebitda):
     else:
         return (f"Potentially overvalued based on EV/EBITDA (>14). EV/EBITDA = {ev_ebitda_value}.", -1, "red")
 
-def evaluate_price_to_sales(ps_ratio):
-    try:
-        ps_value = float(ps_ratio)
-    except:
-        return ("Price-to-Sales ratio is not available.", 0, "black")
-    # Define expected ranges for Price-to-Sales Ratio
-    # These ranges can vary by industry; adjust as necessary
-    if ps_value < 1:
-        return (f"Undervalued based on Price-to-Sales Ratio (<1). Price-to-Sales Ratio = {ps_value}.", 1, "green")
-    elif 1 <= ps_value <= 3:
-        return (f"Fairly valued based on Price-to-Sales Ratio (1 - 3). Price-to-Sales Ratio = {ps_value}.", 0, "orange")
-    else:
-        return (f"Overvalued based on Price-to-Sales Ratio (>3). Price-to-Sales Ratio = {ps_value}.", -1, "red")
-
 def evaluate_metrics(metrics):
     pe_message, pe_score, pe_color = evaluate_pe_ratio(metrics['PE Ratio'])
+    peg_message, peg_score, peg_color = evaluate_peg_ratio(metrics['PEG Ratio'])           # Added PEG Ratio
+    ps_message, ps_score, ps_color = evaluate_price_to_sales(metrics['Price-to-Sales Ratio'])  # Moved PS Ratio to third position
     roe_message, roe_score, roe_color = evaluate_roe(metrics['Return on Equity (%)'])
     de_message, de_score, de_color = evaluate_debt_to_equity(metrics['Debt-to-Equity Ratio'])
     pm_message, pm_score, pm_color = evaluate_profit_margin(metrics['Profit Margin (%)'])
     ev_message, ev_score, ev_color = evaluate_ev_ebitda(metrics['EV/EBITDA Ratio'])
-    ps_message, ps_score, ps_color = evaluate_price_to_sales(metrics['Price-to-Sales Ratio'])
 
-    total_score = pe_score + roe_score + de_score + pm_score + ev_score + ps_score
+    total_score = pe_score + peg_score + ps_score + roe_score + de_score + pm_score + ev_score
 
     # Determine overall valuation without color
     # As per your instruction, the overall evaluation statement is removed
@@ -92,27 +106,30 @@ def evaluate_metrics(metrics):
     evaluations = {
         'Metric': [
             'PE Ratio',
+            'PEG Ratio',                   # Added PEG Ratio
+            'Price-to-Sales Ratio',        # Moved PS Ratio to third position
             'Return on Equity',
             'Debt-to-Equity',
             'Profit Margin',
-            'EV/EBITDA Ratio',
-            'Price-to-Sales Ratio'
+            'EV/EBITDA Ratio'
         ],
         'Evaluation': [
             pe_message,
+            peg_message,                   # Added PEG Ratio
+            ps_message,                    # Moved PS Ratio to third position
             roe_message,
             de_message,
             pm_message,
-            ev_message,
-            ps_message
+            ev_message
         ],
         'Color': [
             pe_color,
+            peg_color,                     # Added PEG Ratio
+            ps_color,                      # Moved PS Ratio to third position
             roe_color,
             de_color,
             pm_color,
-            ev_color,
-            ps_color
+            ev_color
         ]
     }
 

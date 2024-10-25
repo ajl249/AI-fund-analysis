@@ -14,7 +14,7 @@ def get_stock_data(ticker_symbol):
     current_price = info.get('currentPrice', None)
     pe_ratio = info.get('trailingPE', None)
     forward_pe = info.get('forwardPE', None)
-    peg_ratio = info.get('pegRatio', None)
+    peg_ratio = info.get('pegRatio', None)            # Added PEG Ratio
     pb_ratio = info.get('priceToBook', None)
     ps_ratio = info.get('priceToSalesTrailing12Months', None)
     dividend_yield = info.get('dividendYield', None)
@@ -43,10 +43,10 @@ def get_stock_data(ticker_symbol):
     metrics = {
         'Current Price ($)': f"${current_price:,.2f}" if current_price is not None else 'N/A',
         'PE Ratio': f"{pe_ratio:.2f}" if pe_ratio is not None else 'N/A',
+        'PEG Ratio': f"{peg_ratio:.2f}" if peg_ratio is not None else 'N/A',              # Added PEG Ratio
+        'Price-to-Sales Ratio': f"{ps_ratio:.2f}" if ps_ratio is not None else 'N/A',      # Moved PS Ratio to third position
         'Forward PE': f"{forward_pe:.2f}" if forward_pe is not None else 'N/A',
-        'PEG Ratio': f"{peg_ratio:.2f}" if peg_ratio is not None else 'N/A',
         'Price-to-Book Ratio': f"{pb_ratio:.2f}" if pb_ratio is not None else 'N/A',
-        'Price-to-Sales Ratio': f"{ps_ratio:.2f}" if ps_ratio is not None else 'N/A',
         'EV/EBITDA Ratio': f"{ev_ebitda_ratio:.2f}" if ev_ebitda_ratio is not None else 'N/A',
         'Dividend Yield (%)': f"{dividend_yield_percentage:.2f}%" if dividend_yield_percentage is not None else 'N/A',
         'Return on Equity (%)': f"{roe_percentage:.2f}%" if roe_percentage is not None else 'N/A',

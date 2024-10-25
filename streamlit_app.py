@@ -27,19 +27,10 @@ def main():
     st.sidebar.header("Input Options")
     ticker_symbol = st.sidebar.text_input("Enter the stock ticker symbol:", value='AAPL').upper()
 
-    # Display the currently selected ticker
-    st.sidebar.markdown(f"**Currently Selected:** {ticker_symbol}")
-    st.sidebar.markdown("""
-    ---
-    **Instructions:**
-    - Enter the stock ticker symbol (e.g., AAPL for Apple Inc.).
-    - The app will display financial metrics, evaluations, and visualizations.
-    """)
-
     # List of 20 Publicly Traded AI Stocks as Examples
     st.sidebar.markdown("""
-
-     **AI Stock Examples:**
+    ---
+    ### **AI Stocks Examples:**
     - **NVIDIA Corporation (NVDA)**
     - **Alphabet Inc. (GOOGL)**
     - **Microsoft Corporation (MSFT)**
@@ -62,7 +53,15 @@ def main():
     - **Nuance Communications, Inc. (NUAN)**
     """)
 
+    st.sidebar.markdown("""
+    ---
+    **Instructions:**
+    - Enter the stock ticker symbol (e.g., AAPL for Apple Inc.).
+    - The app will display financial metrics, evaluations, and visualizations.
+    """)
 
+    # Display the currently selected ticker
+    st.sidebar.markdown(f"**Currently Selected:** {ticker_symbol}")
 
     st.divider()
 
@@ -78,10 +77,10 @@ def main():
         'Metric': [
             'Current Price ($)',
             'PE Ratio',
+            'PEG Ratio',             # Added PEG Ratio
+            'Price-to-Sales Ratio',  # Moved PS Ratio to third position
             'Forward PE',
-            'PEG Ratio',
             'Price-to-Book Ratio',
-            'Price-to-Sales Ratio',
             'EV/EBITDA Ratio',
             'Dividend Yield (%)',
             'Return on Equity (%)',
@@ -93,10 +92,10 @@ def main():
         'Value': [
             metrics['Current Price ($)'],
             metrics['PE Ratio'],
+            metrics['PEG Ratio'],             # Added PEG Ratio
+            metrics['Price-to-Sales Ratio'],  # Moved PS Ratio to third position
             metrics['Forward PE'],
-            metrics['PEG Ratio'],
             metrics['Price-to-Book Ratio'],
-            metrics['Price-to-Sales Ratio'],
             metrics['EV/EBITDA Ratio'],
             metrics['Dividend Yield (%)'],
             metrics['Return on Equity (%)'],
@@ -142,18 +141,14 @@ def main():
             df_categorical.set_index('Metric')
         )
 
-        # Metrics Explained
-        st.subheader("Metrics Explained")
-        metric_list = list(metric_explanations.keys())
-        choice = st.selectbox(
-            "Select a Metric to Explain",
-            metric_list,
-        )
-        st.write(f"**{choice}:** {metric_explanations[choice]}")
-
-        pass
-
-    st.divider()
+    # Metrics Explained
+    st.header("Metrics Explained")
+    metric_list = list(metric_explanations.keys())
+    choice = st.selectbox(
+        "Select a Metric to Explain",
+        metric_list,
+    )
+    st.write(f"**{choice}:** {metric_explanations[choice]}")
 
     # Display evaluations in a table with color-coded text
     st.header("Evaluations")
