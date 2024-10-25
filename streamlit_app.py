@@ -1,10 +1,3 @@
-import streamlit as st
-
-st.title("🎈 AI fund Stock Analysis")
-st.write(
-    "Input a Ticker to Begin Analysis"
-)
-
 import yfinance as yf
 import matplotlib.pyplot as plt
 import seaborn as sns
