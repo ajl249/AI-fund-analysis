@@ -141,33 +141,6 @@ def main():
     fig_volume.update_layout(xaxis_title='Date', yaxis_title='Volume')
     st.plotly_chart(fig_volume, use_container_width=True)
 
-    # Additional Visualizations: Revenue and Net Income Trends
-    st.header("Revenue and Net Income Trends")
-    try:
-        # Fetch quarterly data for better trend visualization
-        quarterly_financials = stock.quarterly_financials.T
-        if quarterly_financials.empty:
-            st.warning("Quarterly financial data is not available.")
-        else:
-            if 'Total Revenue' in quarterly_financials.columns and 'Net Income' in quarterly_financials.columns:
-                quarterly_financials = quarterly_financials[['Total Revenue', 'Net Income']].dropna()
-                quarterly_financials = quarterly_financials.reset_index()
-
-                fig_financials = px.bar(
-                    quarterly_financials, 
-                    x='index', 
-                    y=['Total Revenue', 'Net Income'],
-                    barmode='group',
-                    title=f'{ticker_symbol} Quarterly Revenue and Net Income',
-                    labels={'index': 'Quarter', 'value': 'Amount ($)'},
-                    hover_data={'index': '|%B %d, %Y'}
-                )
-                fig_financials.update_layout(xaxis_title='Quarter', yaxis_title='Amount ($)')
-                st.plotly_chart(fig_financials, use_container_width=True)
-            else:
-                st.warning("Required financial metrics are not available for quarterly trends.")
-    except Exception as e:
-        st.warning("Financial trends data is not available.")
 
 if __name__ == "__main__":
     main()
