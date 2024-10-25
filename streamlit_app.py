@@ -27,6 +27,16 @@ def main():
     st.sidebar.header("Input Options")
     ticker_symbol = st.sidebar.text_input("Enter the stock ticker symbol:", value='AAPL').upper()
 
+    # Display the currently selected ticker
+    st.sidebar.markdown(f"**Currently Selected:** {ticker_symbol}")
+
+    st.sidebar.markdown("""
+    ---
+    **Instructions:**
+    - Enter the stock ticker symbol (e.g., AAPL for Apple Inc.).
+    - The app will display financial metrics, evaluations, and visualizations.
+    """)
+
     # List of 20 Publicly Traded AI Stocks as Examples
     st.sidebar.markdown("""
     ---
@@ -52,15 +62,7 @@ def main():
     - **Nuance Communications, Inc. (NUAN)**
     """)
 
-    st.sidebar.markdown("""
-    ---
-    **Instructions:**
-    - Enter the stock ticker symbol (e.g., AAPL for Apple Inc.).
-    - The app will display financial metrics, evaluations, and visualizations.
-    """)
-
-    # Display the currently selected ticker
-    st.sidebar.markdown(f"**Currently Selected:** {ticker_symbol}")
+    
 
     st.divider()
 
