@@ -27,6 +27,8 @@ def main():
     st.sidebar.header("Input Options")
     ticker_symbol = st.sidebar.text_input("Enter the stock ticker symbol:", value='AAPL').upper()
 
+    # Display the currently selected ticker
+    st.sidebar.markdown(f"**Currently Selected:** {ticker_symbol}")
     st.sidebar.markdown("""
     ---
     **Instructions:**
@@ -36,8 +38,8 @@ def main():
 
     # List of 20 Publicly Traded AI Stocks as Examples
     st.sidebar.markdown("""
-    ---
-    ### **AI Stocks Examples:**
+
+     **AI Stock Examples:**
     - **NVIDIA Corporation (NVDA)**
     - **Alphabet Inc. (GOOGL)**
     - **Microsoft Corporation (MSFT)**
@@ -61,8 +63,6 @@ def main():
     """)
 
 
-    # Display the currently selected ticker
-    st.sidebar.markdown(f"**Currently Selected:** {ticker_symbol}")
 
     st.divider()
 
