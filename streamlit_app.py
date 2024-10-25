@@ -34,6 +34,33 @@ def main():
     - The app will display financial metrics, evaluations, and visualizations.
     """)
 
+    # List of 20 Publicly Traded AI Stocks as Examples
+    st.sidebar.markdown("""
+    ---
+    ### **AI Stocks Examples:**
+    - **NVIDIA Corporation (NVDA)**
+    - **Alphabet Inc. (GOOGL)**
+    - **Microsoft Corporation (MSFT)**
+    - **Amazon.com, Inc. (AMZN)**
+    - **International Business Machines Corporation (IBM)**
+    - **Tesla, Inc. (TSLA)**
+    - **Meta Platforms, Inc. (META)**
+    - **Baidu, Inc. (BIDU)**
+    - **Advanced Micro Devices, Inc. (AMD)**
+    - **Salesforce.com, Inc. (CRM)**
+    - **Intel Corporation (INTC)**
+    - **Oracle Corporation (ORCL)**
+    - **Twilio Inc. (TWLO)**
+    - **Palantir Technologies Inc. (PLTR)**
+    - **C3.ai, Inc. (AI)**
+    - **UiPath Inc. (PATH)**
+    - **Veritone, Inc. (VERI)**
+    - **Appen Limited (APX)**
+    - **Cognex Corporation (CGNX)**
+    - **Nuance Communications, Inc. (NUAN)**
+    """)
+
+
     # Display the currently selected ticker
     st.sidebar.markdown(f"**Currently Selected:** {ticker_symbol}")
 
