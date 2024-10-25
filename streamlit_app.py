@@ -142,14 +142,18 @@ def main():
             df_categorical.set_index('Metric')
         )
 
-    # Metrics Explained
-    st.header("Metrics Explained")
-    metric_list = list(metric_explanations.keys())
-    choice = st.selectbox(
-        "Select a Metric to Explain",
-        metric_list,
-    )
-    st.write(f"**{choice}:** {metric_explanations[choice]}")
+        # Metrics Explained
+        st.subheader("Metrics Explained")
+        metric_list = list(metric_explanations.keys())
+        choice = st.selectbox(
+            "Select a Metric to Explain",
+            metric_list,
+        )
+        st.write(f"**{choice}:** {metric_explanations[choice]}")
+
+        pass
+
+    st.divider()
 
     # Display evaluations in a table with color-coded text
     st.header("Evaluations")
