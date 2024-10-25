@@ -48,7 +48,6 @@ def main():
     - **C3.ai, Inc. (AI)**
     - **UiPath Inc. (PATH)**
     - **Veritone, Inc. (VERI)**
-    - **Appen Limited (APX)**
     - **Cognex Corporation (CGNX)**
     - **Nuance Communications, Inc. (NUAN)**
     """)
