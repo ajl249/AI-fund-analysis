@@ -16,7 +16,9 @@ def main():
 
     # Sidebar for user input
     st.sidebar.header("Input Options")
-    ticker_symbol = st.sidebar.text_input("Enter the stock ticker symbol:", value='AAPL').upper()
+    with st.popover:
+        st.write("Input Ticker")
+        ticker_symbol = st.text_input("Enter the stock ticker symbol:", value='AAPL').upper()
 
     # Download the stock data
     stock = yf.Ticker(ticker_symbol)
@@ -211,6 +213,7 @@ def main():
     st.header("Overall Evaluation")
     st.markdown(f"### {overall_evaluation}")
 
+    st.
     st.info("Disclaimer: This evaluation is based on basic financial metrics and should not be considered as financial advice. Please conduct your own research advisor before making investment decisions.")
 
     # --- Data Visualization ---
@@ -224,36 +227,8 @@ def main():
 
     # Interactive Price Chart
     st.header("Historical Stock Price")
-    fig = px.line(stock_hist, x=stock_hist.index, y='Close', title=f'{ticker_symbol} Closing Price Over the Last Year')
+    fig = px.line(stock_hist, x=stock_hist.index, y='Closing Price ($)', title=f'{ticker_symbol} Closing Price Over the Last Year')
     st.plotly_chart(fig)
-
-    # Revenue and Earnings (using Yahoo Financials API)
-    st.header("Financial Statements")
-    try:
-        income_stmt = stock.financials
-        income_stmt = income_stmt.T  # Transpose for readability
-        st.subheader("Income Statement")
-        st.dataframe(income_stmt)
-    except Exception as e:
-        st.warning("Income statement data is not available.")
-
-    # Cash Flow Statement
-    try:
-        cashflow_stmt = stock.cashflow
-        cashflow_stmt = cashflow_stmt.T
-        st.subheader("Cash Flow Statement")
-        st.dataframe(cashflow_stmt)
-    except Exception as e:
-        st.warning("Cash flow statement data is not available.")
-
-    # Balance Sheet
-    try:
-        balance_sheet = stock.balance_sheet
-        balance_sheet = balance_sheet.T
-        st.subheader("Balance Sheet")
-        st.dataframe(balance_sheet)
-    except Exception as e:
-        st.warning("Balance sheet data is not available.")
 
 def get_industry_pe_ratio(industry):
     # Placeholder function to get industry average PE ratio
