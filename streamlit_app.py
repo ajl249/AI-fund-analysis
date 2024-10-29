@@ -10,9 +10,12 @@ from evaluations import evaluate_metrics
 from explanations import metric_explanations
 
 def main():
+
+
     # Set Streamlit page configuration to wide layout
     st.set_page_config(
         page_title="University of Exeter AI Fund Stock Analysis",
+        page_icon="AI_fund_logo.jpg",
         layout="wide",
         initial_sidebar_state="expanded"
     )
