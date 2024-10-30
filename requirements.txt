@@ -59,3 +59,4 @@ yfinance==0.2.46
 plotly
 tabulate
 streamlit-tags
+xlsxwriter

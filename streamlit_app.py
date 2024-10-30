@@ -7,6 +7,8 @@ import seaborn as sns
 from streamlit_tags import st_tags_sidebar
 import plotly.express as px
 import yfinance as yf
+from io import BytesIO
+import xlsxwriter
 
 from finance_data import get_stock_data
 from explanations import metric_explanations
@@ -288,14 +290,31 @@ def main():
         st.header("Stock Comparison Table")
         st.write(styled_df)
 
-        # --- 2. Refresh Data Button ---
+        # --- 2. Export to Excel Button ---
+        def to_excel(df):
+            output = BytesIO()
+            with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
+                df.to_excel(writer, index=False, sheet_name='Stock Metrics')
+            processed_data = output.getvalue()
+            return processed_data
+
+        excel_data = to_excel(st.session_state.metrics_df)
+
+        st.download_button(
+            label="📥 Export data to Excel",
+            data=excel_data,
+            file_name='stock_metrics.xlsx',
+            mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        )
+
+        # --- 3. Refresh Data Button ---
         if st.button("Refresh Data"):
             fetch_data()
             st.success("Data refreshed successfully.")
 
         st.divider()
 
-        # --- 3. Metrics Explained ---
+        # --- 4. Metrics Explained ---
         st.header("Metrics Explained")
         metric_list = list(metric_explanations.keys())
         choice = st.selectbox(
@@ -306,7 +325,7 @@ def main():
 
         st.divider()
 
-        # --- 4. Visualization 1: Stock Price Chart ---
+        # --- 5. Visualization 1: Stock Price Chart ---
         st.header("Stock Price Over the Last Year")
 
         # Dropdown to select a ticker
