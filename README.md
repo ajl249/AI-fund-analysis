@@ -53,44 +53,12 @@ Explore the Stock Comparison tool directly through the following link:
 
 ## 📚 **Metrics Explained**
 
-Each financial metric included in the comparison table is accompanied by a detailed explanation to help users understand its importance and implications:
-
-- **PE Ratio:** Price-to-Earnings Ratio
-- **PEG Ratio:** Price/Earnings to Growth Ratio
-- **Price-to-Sales Ratio**
-- **Forward PE:** Forward Price-to-Earnings Ratio
-- **Price-to-Book Ratio**
-- **EV/EBITDA Ratio:** Enterprise Value to Earnings Before Interest, Taxes, Depreciation, and Amortization
-- **Dividend Yield (%)**
-- **Return on Equity (%)**
-- **Earnings Per Share ($)**
-- **Debt-to-Equity Ratio**
-- **Profit Margin (%)**
-- **Beta**
+Each financial metric included in the comparison table is accompanied by a detailed explanation to help users understand its importance and implications
 
 ## 🔗 **AI Stocks Examples**
 
-To get you started, here are 20 publicly traded AI-related stocks included in the app:
+To get you started, there are 17 publicly traded AI-related stocks included in the app. Stocks to remove from or include in the Analysis can be managed easily in the sidebar.
 
-- **NVIDIA Corporation (NVDA)**
-- **Alphabet Inc. (GOOGL)**
-- **Microsoft Corporation (MSFT)**
-- **Amazon.com, Inc. (AMZN)**
-- **International Business Machines Corporation (IBM)**
-- **Tesla, Inc. (TSLA)**
-- **Meta Platforms, Inc. (META)**
-- **Baidu, Inc. (BIDU)**
-- **Advanced Micro Devices, Inc. (AMD)**
-- **Salesforce.com, Inc. (CRM)**
-- **Intel Corporation (INTC)**
-- **Oracle Corporation (ORCL)**
-- **Twilio Inc. (TWLO)**
-- **Palantir Technologies Inc. (PLTR)**
-- **C3.ai, Inc. (AI)**
-- **UiPath Inc. (PATH)**
-- **Veritone, Inc. (VERI)**
-- **Cognex Corporation (CGNX)**
-- **Nuance Communications, Inc. (NUAN)**
 
 ## 📜 **License**
 
