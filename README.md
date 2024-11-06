@@ -68,8 +68,7 @@ This project is licensed under the [MIT License](LICENSE).
 
 For questions, feedback, or suggestions, feel free to reach out:
 
-- **Email:** [your.email@example.com](mailto:your.email@example.com)
-- **LinkedIn:** [Your LinkedIn Profile](https://www.linkedin.com/in/your-profile)
+- **Email:** [ajl249.@exeter.ac.uk]
 
 ---
 
